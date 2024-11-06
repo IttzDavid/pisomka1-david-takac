@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "david-snap",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,21 +11,22 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.6",
-    "next": "15.0.2",
-    "next-auth": "^4.24.10",
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028"
+    "@mui/icons-material": "^6.1.1",
+    "@mui/material": "^6.1.1",
+    "autoprefixer": "^10.4.20",
+    "next": "14.2.12",
+    "next-auth": "^4.24.8",
+    "postcss": "^8.4.47",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.14"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "15.0.2",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "eslint-config-next": "14.2.12",
     "typescript": "^5"
   }
 }
