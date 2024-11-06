@@ -1,4 +1,7 @@
+"use client";  // Make sure this component is treated as a client component
+
 import * as React from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';  // NextAuth hooks
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -13,32 +16,60 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
 export default function AccountMenu() {
+  const { data: session } = useSession();  // Fetch session using NextAuth
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  // Open menu on click
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  // Close the menu
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // Sign out handler
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/auth/odhlasenie' });  // Redirect to sign-out page after signing out
+  };
+
+  // Sign in handler (initiates Google login)
+  const handleSignIn = () => {
+    signIn('google');  // Trigger Google sign-in
+  };
+
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Typography sx={{ minWidth: 100 }}>Contact</Typography>
-        <Typography sx={{ minWidth: 100 }}>Profile</Typography>
-        <Tooltip title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-          </IconButton>
-        </Tooltip>
+        {/* Display "Contact" and "Profile" for logged-in users */}
+        {session ? (
+          <>
+            <Typography sx={{ minWidth: 100 }}>Contact</Typography>
+            <Typography sx={{ minWidth: 100 }}>Profile</Typography>
+            <Tooltip title="Account settings">
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                {/* Display the first letter of the user's name */}
+                <Avatar sx={{ width: 32, height: 32 }}>
+                  {session.user?.name?.charAt(0)}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : (
+          // Show sign-in option if the user is not logged in
+          <Typography sx={{ minWidth: 100 }} onClick={handleSignIn}>Sign In</Typography>
+        )}
       </Box>
+
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -76,31 +107,39 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        {session ? (
+          <>
+            {/* If the user is logged in, show profile options */}
+            <MenuItem onClick={handleClose}>
+              <Avatar /> Profile
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Avatar /> My account
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <PersonAdd fontSize="small" />
+              </ListItemIcon>
+              Add another account
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
+            <MenuItem onClick={handleSignOut}>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </>
+        ) : (
+          // Show sign-in option if the user is not logged in
+          <MenuItem onClick={handleSignIn}>Sign In</MenuItem>
+        )}
       </Menu>
     </React.Fragment>
   );
